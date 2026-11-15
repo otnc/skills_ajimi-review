@@ -1,21 +1,22 @@
 {
-  "name": "skills_example-skill",
+  "name": "ajimi-review",
   "version": "0.1.0",
   "private": true,
-  "description": "Template for an otnc Agent Skills source repository.",
+  "description": "An Agent Skill for verification-first code review.",
   "license": "MIT",
-  "author": "[author]",
+  "author": "otoneko.",
   "type": "module",
   "engines": {
     "node": ">=22.20.0"
   },
   "scripts": {
+    "test": "node --test",
     "validate": "node scripts/validate.mjs",
     "skills:list": "skills add . --list",
     "docs:build": "kiritan build",
     "docs:check": "kiritan check",
     "docs:verify": "kiritan verify",
-    "check": "npm run validate && npm run docs:verify && npm run docs:check && npm run skills:list"
+    "check": "npm test && npm run validate && npm run docs:verify && npm run docs:check && npm run skills:list"
   },
   "devDependencies": {
     "kiritan": "0.7.1",

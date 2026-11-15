@@ -1,7 +1,9 @@
 import { readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 
-const skillsDirectory = new URL("../skills/", import.meta.url);
+const skillsDirectory = process.argv[2] ?? fileURLToPath(new URL("../skills/", import.meta.url));
 const skillEntries = (await readdir(skillsDirectory, { withFileTypes: true }))
   .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."));
 
@@ -10,9 +12,9 @@ function isMapping(value) {
 }
 
 async function validateSkill(directoryName) {
-  const path = `skills/${directoryName}/SKILL.md`;
+  const path = join(skillsDirectory, directoryName, "SKILL.md");
   try {
-    const markdown = await readFile(new URL(`${encodeURIComponent(directoryName)}/SKILL.md`, skillsDirectory), "utf8");
+    const markdown = await readFile(path, "utf8");
     const frontmatter = markdown.match(/^---[ \t]*\r?\n([\s\S]*?)^---[ \t]*(?:\r?\n|$)/m);
     if (!frontmatter || frontmatter.index !== 0) {
       throw new Error("Expected YAML frontmatter at the start of the file.");
@@ -59,4 +61,8 @@ if (skillEntries.length === 0) {
 
 for (const entry of skillEntries) {
   await validateSkill(entry.name);
+}
+
+if (!process.exitCode) {
+  console.log(`${skillEntries.length} skill(s) OK`);
 }
