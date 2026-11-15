@@ -1,38 +1,58 @@
-# Agent Skills source repository template
+# ajimi-review
 
 **English** | [日本語](README.ja.md)
 
-Use this template to create a public `otnc/skills_<name>` repository that can be included in [otnc/agent-skills](https://github.com/otnc/agent-skills).
+An Agent Skill for reviewing pull requests and local changes. Each finding identifies what triggers the defect, what should happen, and what evidence shows the change is responsible.
 
-## Start a repository
+## Install
 
-1. Copy the template into a new repository. Replace `example-skill` in the folder name, the `name` field in `SKILL.md`, and the install commands in this file. Update the package name and description in `package.json`. If the repository name differs from the skill name, use the repository name in the install command and the skill name with `--skill`.
-2. Replace `[year]` and `[author]` in `LICENSE` with the copyright year and holder. Set the `author` field in `package.json` to the package author.
-3. Write the skill in `skills/<name>/SKILL.md`. In `description`, specify what the skill does and when agents should use it. Add `references/`, `scripts/`, or `assets/` inside the skill directory when the instructions need them. Keep files used by a skill inside its directory so it works when installed on its own.
-4. Replace the README content in `base/README.base.md` with usage instructions for the new skill. Run the commands below and commit the generated READMEs and lockfile.
+Install directly after the source repository is published. You can also install from the collection after it syncs.
 
 ```sh
-npm install
+npx skills add otnc/skills_ajimi-review --skill ajimi-review
+npx skills add otnc/agent-skills --skill ajimi-review
+```
+
+## Usage
+
+Give the agent a PR link, a comparison point, or the local changes to inspect. Include acceptance criteria or known constraints when the diff alone leaves them unclear. Name `ajimi-review` to select it explicitly.
+
+- **Pull request** “Review PR #42. The migration must work with existing records.”
+- **Branch changes** “Use ajimi-review to review this branch against `main`. Check how current callers handle the new default.”
+- **Local changes** “Use ajimi-review to review only my staged changes. Retry behavior should stay the same.”
+
+The agent pins the change and baseline, traces the paths that can be affected, and runs a targeted check where it can do so safely. It can also verify a finding from source when the code path and contract settle the claim. The report identifies the evidence used and any material checks left open. Temporary verification uses isolated files when needed.
+
+## Example finding
+
+`[Important]` **Consecutive pages overlap** · `src/paginate.ts:12`
+
+The first page grows from 20 to 50 items, while the second page still starts at offset 20. With the same 120-item fixture, the assertion that page 2 starts immediately after page 1 passes on the baseline (`20 → 21`) and fails on the reviewed change (`50 → 21`, expected `51`). Items 21 through 50 appear twice.
+
+The report gives the scope, findings, discarded candidates, material unverified checks, and verification results. Status `complete` means the requested scope was reviewed, `incomplete` means material checks remain open, and `no changes` means the reviewed diff was empty. Confirmed findings can appear in either a complete or an incomplete report. [Skill instructions](skills/ajimi-review/SKILL.md) · [Report template](skills/ajimi-review/assets/report-template.md)
+
+## References
+
+- [AIに敵対的レビューをさせるな。トークンは検証に使え](https://zenn.dev/karamage/articles/5c3f8370b2b370)
+- [15個の仕込みバグで比較](https://qiita.com/kunitomo926/items/7dfc85770cf5132f3d1c)
+- [Google Engineering Practices — What to look for in a code review](https://google.github.io/eng-practices/review/reviewer/looking-for.html)
+- [CRBugBench](https://arxiv.org/abs/2610.13668)
+- [Hypothesis documentation](https://hypothesis.readthedocs.io/en/latest/)
+- [TLA+ Tools](https://lamport.azurewebsites.net/tla/tools.html)
+
+## Development
+
+Use the Node.js version in `.node-version`. Edit this README in `base/README.base.md` and regenerate both languages.
+
+```sh
+npm ci
 npm run docs:build
 npm run check
 ```
 
-Use the Node.js version in `.node-version` for development. After the initial setup, use `npm ci` to install dependencies from the lockfile.
-
-## Install
-
-After publishing the source repository on GitHub, install the skill directly or from the collection after it syncs.
-
-```sh
-npx skills@latest add otnc/skills_example-skill --skill example-skill
-npx skills@latest add otnc/agent-skills --skill example-skill
-```
-
 ## Release
 
-For later releases, run `npm version patch --no-git-tag-version` or select another version bump. Push the changes to the default branch. Run **Actions → release → Run workflow** on that branch and enter the `package.json` version without the leading `v`, for example `0.1.0`. The workflow runs the same checks as CI, confirms the version matches `package.json`, and publishes a GitHub Release with a `v<version>` tag and notes from the commit history.
-
-The [aggregation workflow](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.md) discovers public `otnc/skills_*` repositories after a stable release is published.
+Run the `release` workflow on the default branch with the version in `package.json`, without the leading `v`. The workflow runs the CI checks, then publishes a GitHub Release with notes from the commit history. The [collection workflow](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.md) discovers public source repositories after a stable release.
 
 ## License
 
