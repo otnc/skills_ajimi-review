@@ -52,7 +52,11 @@ npm run check
 
 ## リリース
 
-デフォルトブランチで `release` ワークフローを実行します。入力するバージョンは `package.json` と同じ値で、先頭に `v` は付けません。CI と同じチェックが通ると、コミット履歴からリリースノートを作って GitHub Release を公開します。安定版の公開後は、[集約先の同期処理](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.ja.md)が配布元を検出します。
+**Actions → release → Run workflow** を開き、デフォルトブランチを選びます。公開するバージョンを `0.2.0` のように、先頭の `v` を付けずに入力します。
+
+ワークフローは `package.json` と `package-lock.json` のバージョンをそろえてから、リリース前のチェックを実行します。チェックが通ると、バージョンの変更をデフォルトブランチにコミットし、`v0.2.0` タグを付けて、コミット履歴をもとに GitHub Release を公開します。両ファイルが指定のバージョンなら、その時点のコミットにタグを付けます。
+
+安定版の公開後は、[集約先の同期処理](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.ja.md)が配布元を検出します。
 
 ## License
 

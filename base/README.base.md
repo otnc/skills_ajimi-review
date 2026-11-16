@@ -105,13 +105,21 @@ npm run check
 :::kiritan{locale=en}
 ## Release
 
-Run the `release` workflow on the default branch with the version in `package.json`, without the leading `v`. The workflow runs the CI checks, then publishes a GitHub Release with notes from the commit history. The [collection workflow](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.md) discovers public source repositories after a stable release.
+Open **Actions → release → Run workflow**, select the default branch, and enter the version to publish, such as `0.2.0` without a leading `v`.
+
+The workflow sets the version in `package.json` and `package-lock.json` and runs the release checks. If they pass, it commits any version changes to the default branch, pushes the `v0.2.0` tag, and publishes a GitHub Release with notes from the commit history. If both files already have the requested version, it tags the current commit.
+
+The [collection workflow](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.md) discovers public source repositories after a stable release.
 :::
 
 :::kiritan{locale=ja}
 ## リリース
 
-デフォルトブランチで `release` ワークフローを実行します。入力するバージョンは `package.json` と同じ値で、先頭に `v` は付けません。CI と同じチェックが通ると、コミット履歴からリリースノートを作って GitHub Release を公開します。安定版の公開後は、[集約先の同期処理](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.ja.md)が配布元を検出します。
+**Actions → release → Run workflow** を開き、デフォルトブランチを選びます。公開するバージョンを `0.2.0` のように、先頭の `v` を付けずに入力します。
+
+ワークフローは `package.json` と `package-lock.json` のバージョンをそろえてから、リリース前のチェックを実行します。チェックが通ると、バージョンの変更をデフォルトブランチにコミットし、`v0.2.0` タグを付けて、コミット履歴をもとに GitHub Release を公開します。両ファイルが指定のバージョンなら、その時点のコミットにタグを付けます。
+
+安定版の公開後は、[集約先の同期処理](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.ja.md)が配布元を検出します。
 :::
 
 ## License

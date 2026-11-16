@@ -52,7 +52,11 @@ npm run check
 
 ## Release
 
-Run the `release` workflow on the default branch with the version in `package.json`, without the leading `v`. The workflow runs the CI checks, then publishes a GitHub Release with notes from the commit history. The [collection workflow](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.md) discovers public source repositories after a stable release.
+Open **Actions → release → Run workflow**, select the default branch, and enter the version to publish, such as `0.2.0` without a leading `v`.
+
+The workflow sets the version in `package.json` and `package-lock.json` and runs the release checks. If they pass, it commits any version changes to the default branch, pushes the `v0.2.0` tag, and publishes a GitHub Release with notes from the commit history. If both files already have the requested version, it tags the current commit.
+
+The [collection workflow](https://github.com/otnc/agent-skills/blob/main/CONTRIBUTING.md) discovers public source repositories after a stable release.
 
 ## License
 
